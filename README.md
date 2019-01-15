@@ -1,4 +1,5 @@
 # ADC_test
+#Sample Code
 Repository made as part of the ADC data workshop training
 
 This repository is used as:
