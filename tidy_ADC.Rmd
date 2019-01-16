@@ -11,7 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 Keeping the top setup chunk^ so you could change echo defaults for the whole doc
 
 Life advice from ADC: knowing when to commit is a very personal thing
-Include all library calls at then beginning of the 
+
+Include all library calls at then beginning of the script
 ```{r library, warning=FALSE, message=FALSE}
 library(dplyr)
 library(tidyr)
@@ -32,6 +33,10 @@ head(catch)
 ```
 
 Possible alt code if that doesn't work:
+
+Note, for this Markup I added ,eval=FALSE to the curly r brackets
+
+That means that the code will show up, but not run
 
 ```{r import data alt method,eval=FALSE}
 catch_df <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method = "libcurl"),
