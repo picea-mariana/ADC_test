@@ -44,6 +44,34 @@ catch_df <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df3
 head(catch_df)
 ```
 
+##Pipe Operators
+
+%>% the keyboard shortcut is command+shift+M 
+
+Added warning=FALSE for the warning about variables? 
+
+```{r data piping to clean, warning=FALSE}
+names(catch)
+
+catch_long <- catch %>%
+  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum) %>%
+  gather(key = "species", value = "catch", -Year, -Region)
+#keys are column names (headings), values are values contained in the columns
+#the opposite of gather is spread
+
+#OR 
+
+#catch_clean <- catch %>%
+  #select(-All, -notesRegCode)
+
+head(catch_long)
+  
+
+```
+
+In the above code chunk, we 
+*Removed two colums
+*Converted from wide data using gather for species counts
 
 
 

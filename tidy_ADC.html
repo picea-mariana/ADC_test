@@ -218,6 +218,35 @@ head(catch)</code></pre>
 <pre class="r"><code>catch_df &lt;- read.csv(url(&quot;https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1&quot;, method = &quot;libcurl&quot;),
                     stringsAsFactors = FALSE)
 head(catch_df)</code></pre>
+<div id="pipe-operators" class="section level2">
+<h2>Pipe Operators</h2>
+<p>%&gt;% the keyboard shortcut is command+shift+M</p>
+<p>Added warning=FALSE for the warning about variables?</p>
+<pre class="r"><code>names(catch)</code></pre>
+<pre><code>## [1] &quot;Region&quot;       &quot;Year&quot;         &quot;Chinook&quot;      &quot;Sockeye&quot;     
+## [5] &quot;Coho&quot;         &quot;Pink&quot;         &quot;Chum&quot;         &quot;All&quot;         
+## [9] &quot;notesRegCode&quot;</code></pre>
+<pre class="r"><code>catch_long &lt;- catch %&gt;%
+  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum) %&gt;%
+  gather(key = &quot;species&quot;, value = &quot;catch&quot;, -Year, -Region)
+#keys are column names (headings), values are values contained in the columns
+#the opposite of gather is spread
+
+#OR 
+
+#catch_clean &lt;- catch %&gt;%
+  #select(-All, -notesRegCode)
+
+head(catch_long)</code></pre>
+<pre><code>##   Region Year species catch
+## 1    SSE 1886 Chinook     0
+## 2    SSE 1887 Chinook     0
+## 3    SSE 1888 Chinook     0
+## 4    SSE 1889 Chinook     0
+## 5    SSE 1890 Chinook     0
+## 6    SSE 1891 Chinook     0</code></pre>
+<p>In the above code chunk, we <em>Removed two colums </em>Converted from wide data using gather for species counts</p>
+</div>
 </div>
 <div id="split-apply-combine" class="section level1">
 <h1>Split-Apply-Combine</h1>
