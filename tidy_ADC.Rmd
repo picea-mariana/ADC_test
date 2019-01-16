@@ -1,0 +1,48 @@
+---
+title: "tidy_adc"
+author: "Julia Stuart"
+date: "1/16/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Keeping the top setup chunk^ so you could change echo defaults for the whole doc
+
+Life advice from ADC: knowing when to commit is a very personal thing
+Include all library calls at then beginning of the 
+```{r library, warning=FALSE, message=FALSE}
+library(dplyr)
+library(tidyr)
+```
+If you need to use a masked function, package_name::function()
+
+
+#Data Cleaning
+
+Read in datafile:
+
+```{r import data}
+catch <- read.csv(file = "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1")
+
+#called byerlySalmonByRegion.csv
+
+head(catch)
+```
+
+Possible alt code if that doesn't work:
+
+```{r import data alt method,eval=FALSE}
+catch_df <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method = "libcurl"),
+                    stringsAsFactors = FALSE)
+head(catch_df)
+```
+
+
+
+
+#Split-Apply-Combine
+
+#join jawns
+
