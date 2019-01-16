@@ -250,25 +250,54 @@ head(catch_long)</code></pre>
 <pre class="r"><code>#issue: counts are in thousands of fish. They did not catch 7 fish in all of Alaska
 
 catch_clean &lt;- catch_long %&gt;%
-  rename(catch_thousands = catch) #%&gt;%
-  #mutate(catch = catch_thousands*1000)
+  rename(catch_thousands = catch) %&gt;%
+  mutate(catch_thousands = ifelse(catch_thousands == &quot;I&quot;,1,catch_thousands)) %&gt;% 
+  mutate(catch_thousands = as.integer(catch_thousands))%&gt;%
+  mutate(catch = catch_thousands*1000)
 
 names(catch_clean)</code></pre>
-<pre><code>## [1] &quot;Region&quot;          &quot;Year&quot;            &quot;species&quot;         &quot;catch_thousands&quot;</code></pre>
-<pre class="r"><code>#the thing you're creating is on the left, the old one is on the right</code></pre>
-<p>Uh oh! I got a warning message– non numeric operators – in the last pipe above.</p>
+<pre><code>## [1] &quot;Region&quot;          &quot;Year&quot;            &quot;species&quot;         &quot;catch_thousands&quot;
+## [5] &quot;catch&quot;</code></pre>
+<pre class="r"><code>summary(catch_clean)</code></pre>
+<pre><code>##      Region          Year        species          catch_thousands  
+##  KOD    : 580   Min.   :1878   Length:8540        Min.   :    0.0  
+##  NSE    : 575   1st Qu.:1922   Class :character   1st Qu.:    0.0  
+##  BRB    : 570   Median :1947   Mode  :character   Median :   36.0  
+##  SSE    : 560   Mean   :1946                      Mean   :  873.2  
+##  CHG    : 550   3rd Qu.:1972                      3rd Qu.:  377.2  
+##  PWS    : 545   Max.   :1997                      Max.   :53676.0  
+##  (Other):5160                                                      
+##      catch         
+##  Min.   :       0  
+##  1st Qu.:       0  
+##  Median :   36000  
+##  Mean   :  873249  
+##  3rd Qu.:  377250  
+##  Max.   :53676000  
+## </code></pre>
+<pre class="r"><code>#general tip: the thing you're creating is on the left, the old one is on the right</code></pre>
+<p>Uh oh! I got a warning message– non numeric operators – in the last pipe.</p>
+<p>The code below will locate the problem</p>
+<p>And then I return to the add columns, remove problems section to fix.</p>
 <pre class="r"><code>#first I &quot;commented&quot; the section of code that didn't work above
 
-test_catch &lt;- as.integer(catch_clean$catch_thousands)</code></pre>
-<pre><code>## Warning: NAs introduced by coercion</code></pre>
-<pre class="r"><code>#NAs introduced by coercion
+test_catch &lt;- as.integer(catch_clean$catch_thousands)
+#NAs introduced by coercion
 #but you can locate those NAs:
 i &lt;- which(is.na(test_catch) == T)
 #now print the location of the i 
-catch_clean[i,]</code></pre>
-<pre><code>##     Region Year species catch_thousands
-## 401    GSE 1955 Chinook               I</code></pre>
-<pre class="r"><code>#telling us that in row 401, catch_thousands is a letter not a number</code></pre>
+catch_clean[i,]
+#telling us that in row 401, catch_thousands is a letter not a number
+
+#now that that's solved, we will return to the pipe chunk
+#and add another line to the pipe operator
+#see:ifelse statement
+#after the ifelse statement has run, re-run the test_catch and i commands
+#then, in the global enviro, see what the value of i is
+#should change to interger(empty)
+#after that, add another line to the pipe O to mutate catch_thous to integers
+#use head to check if it IS indeed turned into an integer </code></pre>
+<p>How to fix your character flaws: see additions to add columns, remove problems</p>
 </div>
 </div>
 <div id="split-apply-combine" class="section level1">

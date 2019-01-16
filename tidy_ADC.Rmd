@@ -78,20 +78,28 @@ In the above code chunk, we
 
 
 
-```{r change column name}
+```{r add columns, remove problems}
 
 #issue: counts are in thousands of fish. They did not catch 7 fish in all of Alaska
 
 catch_clean <- catch_long %>%
-  rename(catch_thousands = catch) #%>%
-  #mutate(catch = catch_thousands*1000)
+  rename(catch_thousands = catch) %>%
+  mutate(catch_thousands = ifelse(catch_thousands == "I",1,catch_thousands)) %>% 
+  mutate(catch_thousands = as.integer(catch_thousands))%>%
+  mutate(catch = catch_thousands*1000)
 
 names(catch_clean)
-#the thing you're creating is on the left, the old one is on the right
+summary(catch_clean)
+#general tip: the thing you're creating is on the left, the old one is on the right
 
 ```
-Uh oh! I got a warning message-- non numeric operators -- in the last pipe above. 
-```{r testing chunk}
+Uh oh! I got a warning message-- non numeric operators -- in the last pipe.
+
+The code below will locate the problem
+
+And then I return to the add columns, remove problems section to fix.
+
+```{r testing chunk, eval=FALSE}
 
 #first I "commented" the section of code that didn't work above
 
@@ -102,7 +110,23 @@ i <- which(is.na(test_catch) == T)
 #now print the location of the i 
 catch_clean[i,]
 #telling us that in row 401, catch_thousands is a letter not a number
+
+#now that that's solved, we will return to the pipe chunk
+#and add another line to the pipe operator
+#see:ifelse statement
+#after the ifelse statement has run, re-run the test_catch and i commands
+#then, in the global enviro, see what the value of i is
+#should change to interger(empty)
+#after that, add another line to the pipe O to mutate catch_thous to integers
+#use head to check if it IS indeed turned into an integer 
+
 ```
+
+How to fix your character flaws: see additions to add columns, remove problems
+
+
+
+
 
 
 #Split-Apply-Combine
