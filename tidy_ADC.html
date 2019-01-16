@@ -222,6 +222,7 @@ head(catch_df)</code></pre>
 <h2>Pipe Operators</h2>
 <p>%&gt;% the keyboard shortcut is command+shift+M</p>
 <p>Added warning=FALSE for the warning about variables?</p>
+<p>This is the warning: attributes are not identical across measure variables; they will be dropped</p>
 <pre class="r"><code>names(catch)</code></pre>
 <pre><code>## [1] &quot;Region&quot;       &quot;Year&quot;         &quot;Chinook&quot;      &quot;Sockeye&quot;     
 ## [5] &quot;Coho&quot;         &quot;Pink&quot;         &quot;Chum&quot;         &quot;All&quot;         
@@ -246,6 +247,28 @@ head(catch_long)</code></pre>
 ## 5    SSE 1890 Chinook     0
 ## 6    SSE 1891 Chinook     0</code></pre>
 <p>In the above code chunk, we <em>Removed two colums </em>Converted from wide data using gather for species counts</p>
+<pre class="r"><code>#issue: counts are in thousands of fish. They did not catch 7 fish in all of Alaska
+
+catch_clean &lt;- catch_long %&gt;%
+  rename(catch_thousands = catch) #%&gt;%
+  #mutate(catch = catch_thousands*1000)
+
+names(catch_clean)</code></pre>
+<pre><code>## [1] &quot;Region&quot;          &quot;Year&quot;            &quot;species&quot;         &quot;catch_thousands&quot;</code></pre>
+<pre class="r"><code>#the thing you're creating is on the left, the old one is on the right</code></pre>
+<p>Uh oh! I got a warning message– non numeric operators – in the last pipe above.</p>
+<pre class="r"><code>#first I &quot;commented&quot; the section of code that didn't work above
+
+test_catch &lt;- as.integer(catch_clean$catch_thousands)</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>#NAs introduced by coercion
+#but you can locate those NAs:
+i &lt;- which(is.na(test_catch) == T)
+#now print the location of the i 
+catch_clean[i,]</code></pre>
+<pre><code>##     Region Year species catch_thousands
+## 401    GSE 1955 Chinook               I</code></pre>
+<pre class="r"><code>#telling us that in row 401, catch_thousands is a letter not a number</code></pre>
 </div>
 </div>
 <div id="split-apply-combine" class="section level1">

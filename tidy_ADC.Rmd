@@ -50,6 +50,9 @@ head(catch_df)
 
 Added warning=FALSE for the warning about variables? 
 
+This is the warning: attributes are not identical across measure variables;
+they will be dropped
+
 ```{r data piping to clean, warning=FALSE}
 names(catch)
 
@@ -73,6 +76,33 @@ In the above code chunk, we
 *Removed two colums
 *Converted from wide data using gather for species counts
 
+
+
+```{r change column name}
+
+#issue: counts are in thousands of fish. They did not catch 7 fish in all of Alaska
+
+catch_clean <- catch_long %>%
+  rename(catch_thousands = catch) #%>%
+  #mutate(catch = catch_thousands*1000)
+
+names(catch_clean)
+#the thing you're creating is on the left, the old one is on the right
+
+```
+Uh oh! I got a warning message-- non numeric operators -- in the last pipe above. 
+```{r testing chunk}
+
+#first I "commented" the section of code that didn't work above
+
+test_catch <- as.integer(catch_clean$catch_thousands)
+#NAs introduced by coercion
+#but you can locate those NAs:
+i <- which(is.na(test_catch) == T)
+#now print the location of the i 
+catch_clean[i,]
+#telling us that in row 401, catch_thousands is a letter not a number
+```
 
 
 #Split-Apply-Combine
