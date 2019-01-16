@@ -6,6 +6,7 @@ This repository is used as:
 
 *An introduction to git
 *Using git with R Studio
+*Jessica thinks this is fun.
 
 ##Credits
 
