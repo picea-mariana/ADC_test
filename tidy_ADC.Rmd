@@ -198,5 +198,40 @@ head(Chum_ALU_90)
 
 #join jawns
 
+https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1
+
+```{r import region datafile}
+region_defs <- read.csv(file = "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1")
+
+#called byerlyRegionDefs.csv
+
+head(region_defs)
+```
+
+```{r clean region datafile}
+names(region_defs)
+region_clean <- region_defs %>% 
+  select(code, mgmtArea)
+names(region_clean)
+
+#just remove columns that are not of interest,
+#for more select code detail, see Chunk 5
+```
+
+
+```{r join datasets: two methods, warning = FALSE}
+#catch_joined <- left_join(catch_clean,region_clean)
+#this code doesn't work because it doesn't have a common variable
+
+catch_joined <- left_join(catch_clean,region_clean, 
+                          by = c("Region" = "code"))
+
+head(catch_joined)
+####### the other way--rename 
+region_clean <-  rename(region_clean, Region = code, Region_Name = mgmtArea)
+
+catch_join2 <- left_join(catch_clean,region_clean)
+
+```
 
 
