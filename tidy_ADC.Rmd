@@ -16,6 +16,7 @@ Include all library calls at then beginning of the script
 ```{r library, warning=FALSE, message=FALSE}
 library(dplyr)
 library(tidyr)
+library(plotrix) #for standard error function
 ```
 If you need to use a masked function, package_name::function()
 
@@ -131,5 +132,71 @@ How to fix your character flaws: see additions to add columns, remove problems
 
 #Split-Apply-Combine
 
+We want to calculate the total catch of all species by region.
+
+```{r group by and summarise}
+names(catch_clean)
+catch_total <- catch_clean %>% 
+  group_by(Region) %>%
+  summarise(catch_region = sum(catch))
+
+catch_total
+
+catch_total2 <- catch_clean %>% 
+  group_by(Region,Year) %>%
+  summarise(catch_region = sum(catch))
+
+catch_total3 <- catch_clean %>% 
+  group_by(Region,Year) %>%
+  summarise(catch_region = sum(catch),
+            n_obs = n())
+
+head(catch_total3)
+
+catch_total4 <- catch_clean %>% 
+  group_by(Region) %>%
+  summarise(catch_mean = mean(catch_thousands),
+            catch_se = std.error(catch_thousands))
+
+head(catch_total4)
+
+catch_total5 <- catch_clean %>% 
+  group_by(Year,species) %>%
+  summarise(catch_mean = mean(catch_thousands),
+            catch_se = std.error(catch_thousands))
+
+
+```
+
+FILTERING
+
+```{r filter feeder}
+names(catch_clean)
+catch_chinook <- catch_clean %>%
+  filter(species == "Chinook")
+
+head(catch_chinook)
+
+catch_chinook_chum <- catch_clean %>%
+  filter(species == "Chinook"|species == "Chum")
+
+catch_ALU_chum <- catch_clean %>%
+  filter(Region == "ALU" & species == "Chum")
+
+head(catch_ALU_chum)
+
+Chum_ALU_90 <- catch_clean %>%
+  filter(Region == "ALU" & species == "Chum" & Year >= 1990) %>%
+  arrange(-Year)
+#to arrange ascending just type (Year), descending is (-Year)
+
+head(Chum_ALU_90)
+
+
+```
+
+
 #join jawns
+
+
 
