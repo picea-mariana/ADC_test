@@ -26,9 +26,82 @@ Read in data from: Alaska Department of Fish and Game, Division of Commercial Fi
 esc <- read.csv(file = "https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auuid%3Af119a05b-bbe7-4aea-93c6-85434dcb1c5e", stringsAsFactors = FALSE)
 
 ```
+#Data Tidying
+
+##Calculate annual, regional total escarpment
+
+* `separate` the date into Year-Month-Date
+
+* `group_by` year, species, and region and `summarise`
+
+* `filter` for salmon species
+
+
+```{r cleaning data, echo=FALSE}
+
+annual_esc <- esc %>%
+  separate(sampleDate, into = c("year","month","day"), sep = "-") %>% 
+  mutate(year = as.numeric(year)) %>%  #change year from <chr> to <dbl>
+  group_by(SASAP.Region,Species,year) %>% 
+  summarise(escarpment = sum(DailyCount)) %>% 
+  filter(Species %in% c("Chinook","Sockeye","Pink","Chum","Coho"))
+#head(annual_esc)
+```
+
+```{r interactive table, echo=FALSE}
+
+datatable(annual_esc)
+```
+
+#Static Plots
+
+```{r ggplot}
+names(annual_esc)
+
+ggplot(data = annual_esc, mapping = aes(x = Species, y = escarpment)) +
+  geom_col()
+
+#everything in the aes call is related to a column in your dataset, therefore
+#you need to 
+
+ggplot(annual_esc, aes(x = Species, y = escarpment, fill=SASAP.Region)) +
+  geom_col()
 
 
 
+
+
+```
+
+Now say we're interested in just Kodiak species
+timeseries of Kodiak by species
+
+```{r ggplot plus}
+
+ggplot(data = filter(annual_esc, SASAP.Region == "Kodiak"), aes(year,escarpment, color = Species)) + 
+  geom_line()
+
+#now make it look nicer
+
+my_theme <- theme_bw()+
+  theme(plot.title = element_text(hjust=0.5))
+
+ggplot(filter(annual_esc, SASAP.Region == "Kodiak"), aes(x = year, y = escarpment, color = Species)) + 
+    geom_line() +
+    geom_point(shape = 12, size=.5) +
+    ylab("Escapement") +
+    ggtitle("Kodiak Salmon Escapement") +
+    ggtitle("Kodiak Salmon") +
+  my_theme
+```
+Plot timeseries of escapement by species for all regions
+
+```{r}
+
+```
+
+
+#Interactive Maps
 
 
 
