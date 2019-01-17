@@ -110,6 +110,26 @@ ggsave("region_e.png")
 
 
 #Interactive Maps
+Find unique locations with lat-long values
+```{r unique locations}
+
+locations <- esc %>% 
+  distinct(Location, Latitude, Longitude) %>% 
+  drop_na()
+
+datatable(locations)
+
+```
+
+Creating leaflet map!
+
+```{r leaflet}
+#leaflet uses the pipe, not the plus
+leaflet(locations) %>% 
+  addTiles() %>% 
+  addMarkers(~ Longitude, ~Latitude, popup = ~Location)
+```
+
 
 
 
