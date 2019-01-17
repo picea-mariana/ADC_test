@@ -96,7 +96,15 @@ ggplot(filter(annual_esc, SASAP.Region == "Kodiak"), aes(x = year, y = escarpmen
 ```
 Plot timeseries of escapement by species for all regions
 
-```{r}
+```{r facet wrapping, fig.height=10, fig.width=6}
+
+ggplot(annual_esc, aes(year, escarpment, color=Species)) +
+  geom_line()+
+  geom_point(shape = 12, size=.5)+
+  facet_wrap(~SASAP.Region, scales= "free", ncol=2)+
+  theme_bw()
+
+ggsave("region_e.png")
 
 ```
 
