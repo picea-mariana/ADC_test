@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+If you don't want to show ANY code, above set echo = FALSE 
 Add libraries needed
 ```{r library, warning=FALSE, message=FALSE}
 library(leaflet)
