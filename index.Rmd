@@ -16,6 +16,8 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(DT)
+library(ncdf4)
+library(rnoaa)
 
 ```
 
@@ -132,6 +134,117 @@ leaflet(locations) %>%
 
 
 
+#R OpenSci Demo
 
+Read in buoy data
+```{r read in buoy data}
+bd <- buoy(dataset= "cwind", buoyid = 46080, year = 2018, datatype = "c")
+```
+Make it a real dataframe based on the buoy object
+```{r make a real dataframe}
+wind_speed <- data.frame(time = as.POSIXct(bd$data$time), speed = bd$data$wind_spd)
+#wrap "time" values in as.POSIXct to handle time elements better
+#different than string, numeric, or factor
+
+```
+
+```{r plot windspeed}
+ggplot(wind_speed, aes(time, speed))+
+  geom_point(shape=5, size=1)
+
+```
+^This was for the physical scientists
+Now, for the Biologists!
+
+```{r mapr and spocc}
+#install.packages("mapr", dependencies = TRUE)
+library(mapr)
+library(spocc)
+
+spp <- c("Ursus arctos", "Ursus maritimus","Ursus americanus kermodei")
+bears <- occ(query = spp, from = 'gbif', has_coords = TRUE, limit = 50)
+map_leaflet(bears, color = c("brown", "blue","pink"), size = 1)
+```
+
+CAN YOU DO THIS FOR MOSS??
+
+```{r YOU CAN DO MOSS}
+spp2 <- c("Hylocomium splendens", "Tomentypnum nitens","Sphagnum fuscum")
+moss <- occ(query = spp2, from = 'gbif', has_coords = TRUE, limit = 500)
+map_leaflet(moss, color = c("#498A8B", "#7E8D60","#838E8E"), size = 1, alpha =1)
+```
+There is a package called striptime that can do cool stuff with dates.
+I'm writing this with the hope that I'll never have to use it. 
+
+#Net CDF files
+##Read in data from a file
+```{r import parts of file needed}
+setwd("~/Desktop/ADC_training/ADC_test")
+nc <- nc_open("~/Desktop/ADC_training/WG2013CTD.nc")
+print(nc) #use this for an overview of what is in the profile
+```
+NetCDF files are very flexible, and that is both a good and a bad thing
+```{r assign variables to vector, see dimensions}
+#apparently this will help us know how the matrix is oriented
+#this is also listed in the metadata
+vars <- attributes(nc$var)$names
+vars
+
+dims <- attributes(nc$dim)$names
+#this makes it easier to look at the names of the data you might want
+```
+If we were doing this "for real", there's some other stuff we could pull 
+Note: these values in the box above didn't "pop up" when I used the $; I typed what was in the tutorial
+
+```{r make salinity & time values}
+salinity <- ncvar_get(nc, "sal")
+time <- ncvar_get(nc, "time")
+depth <- ncvar_get(nc, "z")
+```
+
+##Reformat the output
+Coerce this into a dataframe
+```{r fix the time}
+
+time <- as.POSIXct((time + 719529)*86400, origin = "1970-01-01", tz = "UTC")
+#this would be a good function for the mytools package 
+```
+
+```{r make salinity dataframe}
+salinity_data <- as.data.frame(salinity)
+#Now assign column names to depth values
+names(salinity_data) <- as.character(depth)
+#Reshape the data and add time
+salinity_data_long <- salinity_data %>% 
+  mutate(time = time) %>% 
+  gather(key = "depth", value = "salinity", -time) %>% 
+  mutate(depth = as.numeric(depth))
+
+#probably should retain a profile ID, should've grabbed from netCDF
+
+```
+
+##Plots
+
+```{r}
+ggplot(salinity_data_long, aes(x = time, y = depth, fill = salinity)) +
+    geom_raster() +
+    theme_bw() +
+    ylab("Depth (m)") +
+    xlab("") +
+    scale_fill_continuous(low = "gray", high = "red", name = "Salinity (psu)")
+
+ggplot(salinity_data_long, aes(x = salinity,
+                          y = depth,
+                          group = time,
+                          color = time)) +
+    geom_line(size = .1) +
+    scale_y_reverse() +
+    theme_bw() +
+    ylab("Depth (m)") +
+    xlab("Salinity (psu)") +
+    theme(legend.title = element_blank())
+```
+If you are working with rester data, you can also use the `raster` package
 
 
